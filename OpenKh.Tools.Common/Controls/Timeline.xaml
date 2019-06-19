@@ -8,15 +8,29 @@
              d:DesignHeight="120" d:DesignWidth="300"
              MouseDown="UserControl_MouseDown"
              MouseMove="UserControl_MouseMove">
-    <Grid Background="White">
-        <Canvas>
-            <Line
-                x:Name="cursor"
-                Stroke="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=Foreground}"
-                Canvas.Top="0"
-                Canvas.Left="0"
-                StrokeThickness="2"
-                Y2="{Binding RelativeSource={RelativeSource Self}, Path=Parent.ActualHeight}"/>
-        </Canvas>
+    <Grid>
+        <ScrollViewer Visibility="Collapsed">
+            <ItemsControl
+                ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=Items}"/>
+        </ScrollViewer>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Canvas>
+                <Line
+                    x:Name="cursor"
+                    Grid.Column="0"
+                    Stroke="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=Foreground}"
+                    Canvas.Top="0"
+                    Canvas.Left="0"
+                    StrokeThickness="2"
+                    Y2="{Binding RelativeSource={RelativeSource Self}, Path=Parent.ActualHeight}"/>
+            </Canvas>
+            <ScrollBar Grid.Column="1" Visibility="Collapsed"/>
+        </Grid>
     </Grid>
 </UserControl>

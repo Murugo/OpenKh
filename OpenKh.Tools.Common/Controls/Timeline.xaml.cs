@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,11 +14,24 @@ namespace OpenKh.Tools.Common.Controls
     /// </summary>
     public partial class Timeline : UserControl
     {
+        public class TimelineEntryCollection : CollectionBase
+        {
+            public TimelineEntry this[int Index] => (TimelineEntry)List[Index];
+            public bool Contains(TimelineEntry itemType) => List.Contains(itemType);
+            public int Add(TimelineEntry itemType) => List.Add(itemType);
+            public void Remove(TimelineEntry itemType) => List.Remove(itemType);
+            public void Insert(int index, TimelineEntry itemType) => List.Insert(index, itemType);
+            public int IndexOf(TimelineEntry itemType) => List.IndexOf(itemType);
+        }
+
         public static readonly DependencyProperty ValueProperty =
             GetDependencyProperty<Timeline, double>(nameof(Value), (o, x) => o.SetValue(x));
 
         public static readonly DependencyProperty MaxValueProperty =
             GetDependencyProperty<Timeline, double>(nameof(MaxValue), (o, x) => o.SetMaxValue(x));
+
+        public static readonly DependencyProperty ItemsProperty =
+            GetDependencyProperty<Timeline, TimelineEntryCollection>(nameof(Items), (o, x) => { });
 
         public double Value
         {
@@ -29,9 +45,17 @@ namespace OpenKh.Tools.Common.Controls
             set => SetValue(MaxValueProperty, value);
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        public TimelineEntryCollection Items
+        {
+            get => (TimelineEntryCollection)GetValue(ItemsProperty);
+            set => SetValue(ItemsProperty, value);
+        }
+
         public Timeline()
         {
             InitializeComponent();
+            Items = new TimelineEntryCollection();
         }
 
         private void SetValue(double x)
