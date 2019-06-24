@@ -74,7 +74,7 @@ namespace OpenKh.Kh2
             if (Version == 4 && ChannelSize == FileSize - 0x60 && reader.ReadInt32Swap() != 0)
             {
                 //KH VAG / VAS file
-                //Beware: VAGs converted from MFAudio have Version 3
+                //VAGs converted from MFAudio have Version 3
                 reader.BaseStream.Position = 0x14;
                 LoopStartSample = reader.ReadInt32Swap();
                 LoopEndSample = reader.ReadInt32Swap();

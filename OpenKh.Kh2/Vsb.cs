@@ -34,6 +34,7 @@ namespace OpenKh.Kh2
 
                 //IopVoice can have "ghost entries"
                 //These entries' offsets and length are FFFFFFFF
+                //This entries should also be added in some way, because if you save this file once again it might cause problems in KH
                 if (offset == -1 && length == -1)
                     continue;
 
