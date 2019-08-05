@@ -3,9 +3,7 @@ using OpenKh.Common;
 using OpenKh.Kh2;
 using OpenKh.Kh2.Contextes;
 using OpenKh.Kh2.Extensions;
-using OpenKh.Kh2.Messages;
 using OpenKh.Tools.Common.Extensions;
-using OpenKh.Tools.Common.Models;
 using OpenKh.Tools.Kh2TextEditor.Types;
 using System;
 using System.Collections.Generic;
@@ -13,10 +11,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Media;
 using Xe.Tools;
 using Xe.Tools.Wpf.Commands;
 using Xe.Tools.Wpf.Dialogs;
+using OpenKh.Tools.Common.Models;
 
 namespace OpenKh.Tools.Kh2TextEditor.ViewModels
 {
@@ -28,6 +26,7 @@ namespace OpenKh.Tools.Kh2TextEditor.ViewModels
         private string _barEntryName;
         private FontContext _fontContext = new FontContext();
         private FontType _fontType;
+        private EncodingType _encodingType;
 
         public string Title => $"{_barEntryName ?? DefaultName} | {FileName ?? "untitled"} | {ApplicationName}";
 
@@ -63,6 +62,16 @@ namespace OpenKh.Tools.Kh2TextEditor.ViewModels
             set
             {
                 _fontType = value;
+                InvalidateFontContext();
+            }
+        }
+
+        public EncodingType EncodingType
+        {
+            get => _encodingType;
+            set
+            {
+                _encodingType = value;
                 InvalidateFontContext();
             }
         }
@@ -252,9 +261,44 @@ namespace OpenKh.Tools.Kh2TextEditor.ViewModels
 
         private void InvalidateFontContext()
         {
-            TextEditor.TextContext = FontType == FontType.System ?
-                _fontContext.ToKh2EuSystemTextContext() :
-                _fontContext.ToKh2EuEventTextContext();
+            KingdomTextContext context;
+
+            switch (EncodingType)
+            {
+                case EncodingType.European:
+                    switch (FontType)
+                    {
+                        case FontType.System:
+                            context = _fontContext.ToKh2EuSystemTextContext();
+                            break;
+                        case FontType.Event:
+                            context = _fontContext.ToKh2EuEventTextContext();
+                            break;
+                        default:
+                            context = null;
+                            break;
+                    }
+                    break;
+                case EncodingType.Japanese:
+                    switch (FontType)
+                    {
+                        case FontType.System:
+                            context = _fontContext.ToKh2JpSystemTextContext();
+                            break;
+                        case FontType.Event:
+                            context = _fontContext.ToKh2JpEventTextContext();
+                            break;
+                        default:
+                            context = null;
+                            break;
+                    }
+                    break;
+                default:
+                    context = null;
+                    break;
+            }
+
+            TextEditor.TextContext = context;
         }
 
         private bool TryReadMsg(Stream stream)
